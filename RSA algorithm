@@ -1,0 +1,23 @@
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Random import get_random_bytes
+def generate_key_pair():
+    key = RSA.generate(2048)
+    private_key = key.export_key()
+    public_key = key.publickey().export_key()
+    return private_key, public_key
+def rsa_encrypt(plaintext, public_key):
+    cipher_rsa = PKCS1_OAEP.new(RSA.import_key(public_key))
+    ciphertext = cipher_rsa.encrypt(plaintext)
+    return ciphertext
+def rsa_decrypt(ciphertext, private_key):
+    cipher_rsa = PKCS1_OAEP.new(RSA.import_key(private_key))
+    plaintext = cipher_rsa.decrypt(ciphertext)
+    return plaintext
+plaintext = b"Hello, World!"
+private_key, public_key = generate_key_pair()
+print("Plaintext:", plaintext)
+encrypted_text = rsa_encrypt(plaintext, public_key)
+print("Encrypted:", encrypted_text)
+decrypted_text = rsa_decrypt(encrypted_text, private_key)
+print("Decrypted:", decrypted_text.decode())
