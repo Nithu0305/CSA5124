@@ -1,0 +1,15 @@
+import hmac
+import hashlib
+
+def generate_hmac(key, message):
+    # Create an HMAC object using the provided key and SHA-256 hash function
+    hmac_object = hmac.new(key, message, hashlib.sha256)
+    # Compute the HMAC and return the digest
+    hmac_digest = hmac_object.digest()
+    return hmac_digest
+
+# Example usage
+key = b"secret_key"
+message = b"Hello, World!"
+mac = generate_hmac(key, message)
+print("HMAC:", mac.hex())
