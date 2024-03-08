@@ -1,0 +1,33 @@
+import random
+def generate_cipher_alphabet():
+    alphabet = list('abcdefghijklmnopqrstuvwxyz')
+    random.shuffle(alphabet)
+    return ''.join(alphabet)
+def monoalphabetic_substitution(text, key, decrypt=False):
+    result = ""
+    for char in text:
+        if char.isalpha():
+            if char.isupper():
+                start = ord('A')
+            else:
+                start = ord('a')
+            if decrypt:
+                shifted_char = chr((key.index(char.lower()) - start) % 26 + start)
+            else:
+                shifted_char = key[ord(char.lower()) - start]
+            if char.isupper():
+                result += shifted_char.upper()
+            else:
+                result += shifted_char
+        else:
+            result += char
+    return result
+plaintext = "Hello, World!"
+key = generate_cipher_alphabet()
+print("Key:", key)
+
+encrypted_text = monoalphabetic_substitution(plaintext, key)
+print("Encrypted:", encrypted_text)
+
+decrypted_text = monoalphabetic_substitution(encrypted_text, key, decrypt=True)
+print("Decrypted:", decrypted_text)
