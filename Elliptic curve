@@ -1,0 +1,11 @@
+from ecdsa import SigningKey, VerifyingKey, NIST256p
+import hashlib
+private_key = SigningKey.generate(curve=NIST256p)
+public_key = private_key.verifying_key
+message = b"Hello, World!"
+signature = private_key.sign(message)
+try:
+    assert public_key.verify(signature, message)
+    print("Signature verified.")
+except:
+    print("Signature verification failed.")
