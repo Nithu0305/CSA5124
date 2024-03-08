@@ -1,0 +1,36 @@
+import socket
+import ssl
+
+# Server configuration
+HOST = 'localhost'
+PORT = 12345
+
+# Create a socket
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Bind the socket to the host and port
+server_socket.bind((HOST, PORT))
+
+# Listen for incoming connections
+server_socket.listen(5)
+
+print("Server listening on {}:{}".format(HOST, PORT))
+
+# Accept incoming connections
+client_socket, client_address = server_socket.accept()
+
+# Wrap the socket with SSL/TLS
+ssl_socket = ssl.wrap_socket(client_socket, server_side=True, certfile="server.crt", keyfile="server.key", ssl_version=ssl.PROTOCOL_TLS)
+
+# Receive data from the client
+data = ssl_socket.recv(1024)
+print("Received:", data.decode())
+
+# Send response to the client
+ssl_socket.send(b"Hello from server!")
+
+# Close the SSL socket
+ssl_socket.close()
+
+# Close the server socket
+server_socket.close()
