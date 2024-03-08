@@ -1,0 +1,44 @@
+def rail_fence_cipher(text, rails, encrypt=True):
+    if rails < 2:
+        raise ValueError("Number of rails must be 2 or more.")
+    if encrypt:
+        fence = [[] for _ in range(rails)]
+        rail = 0
+        direction = 1
+        for char in text:
+            fence[rail].append(char)
+            rail += direction
+            if rail == 0 or rail == rails - 1:
+                direction *= -1
+        encrypted_text = ''.join(char for rail in fence for char in rail)
+        return encrypted_text
+    else:
+        fence = [['' for _ in range(len(text))] for _ in range(rails)]
+        rail = 0
+        direction = 1  
+        for i in range(len(text)):
+            fence[rail][i] = '*'
+            rail += direction     
+            if rail == 0 or rail == rails - 1:
+                direction *= -1     
+        index = 0
+        for i in range(rails):
+            for j in range(len(text)):
+                if fence[i][j] == '*' and index < len(text):
+                    fence[i][j] = text[index]
+                    index += 1     
+        decrypted_text = ''
+        rail = 0
+        direction = 1        
+        for _ in range(len(text)):
+            decrypted_text += fence[rail][_]
+            rail += direction         
+            if rail == 0 or rail == rails - 1:
+                direction *= -1
+        return decrypted_text
+plaintext = "HELLO"
+rails = 3
+encrypted_text = rail_fence_cipher(plaintext, rails)
+print("Encrypted:", encrypted_text)
+decrypted_text = rail_fence_cipher(encrypted_text, rails, encrypt=False)
+print("Decrypted:", decrypted_text)
