@@ -1,0 +1,54 @@
+def prepare_text(text):
+    text = text.upper()
+    text = ''.join(filter(str.isalpha, text))
+    return text
+def generate_key_square(key):
+    key = prepare_text(key)
+    # Initialize the key square with the letters of the keyword
+    key_square = list(key)
+    alphabet = 'ABCDEFGHIKLMNOPQRSTUVWXYZ' 
+    for char in alphabet:
+        if char not in key_square:
+            key_square.append(char)
+    return key_square
+def generate_pairs(text):
+    pairs = []
+    i = 0
+    while i < len(text):
+        if i == len(text) - 1 or text[i] == text[i + 1]:
+            pairs.append(text[i] + 'X')
+            i += 1
+        else:
+            pairs.append(text[i] + text[i + 1])
+            i += 2
+    return pairs
+def find_position(matrix, char):
+    for i, row in enumerate(matrix):
+        if char in row:
+            return i, row.index(char)
+    return None
+def playfair_cipher(text, key, encrypt=True):
+    key_square = generate_key_square(key)
+    text = prepare_text(text)
+    pairs = generate_pairs(text)
+    result = ''
+    direction = 1 if encrypt else -1
+    for pair in pairs:
+        row1, col1 = find_position(key_square, pair[0])
+        row2, col2 = find_position(key_square, pair[1])
+        if row1 == row2:
+            result += key_square[row1][(col1 + direction) % 5]
+            result += key_square[row2][(col2 + direction) % 5]
+        elif col1 == col2:
+            result += key_square[(row1 + direction) % 5][col1]
+            result += key_square[(row2 + direction) % 5][col2]
+        else:
+            result += key_square[row1][col2]
+            result += key_square[row2][col1]
+    return result
+plaintext = "Hello, World!"
+key = "KEYWORD"
+encrypted_text = playfair_cipher(plaintext, key)
+print("Encrypted:", encrypted_text)
+decrypted_text = playfair_cipher(encrypted_text, key, encrypt=False)
+print("Decrypted:", decrypted_text)
