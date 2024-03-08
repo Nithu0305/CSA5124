@@ -1,0 +1,24 @@
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+from Crypto.Util.Padding import pad, unpad
+
+def aes_encrypt(plaintext, key):
+    cipher = AES.new(key, AES.MODE_CBC)
+    ciphertext = cipher.encrypt(pad(plaintext, AES.block_size))
+    return ciphertext, cipher.iv
+
+def aes_decrypt(ciphertext, key, iv):
+    cipher = AES.new(key, AES.MODE_CBC, iv=iv)
+    decrypted_text = unpad(cipher.decrypt(ciphertext), AES.block_size)
+    return decrypted_text
+
+# Example usage
+plaintext = b"Hello, World!"
+key = get_random_bytes(16)  # AES key should be 16 bytes (128 bits) long
+print("Plaintext:", plaintext)
+
+encrypted_text, iv = aes_encrypt(plaintext, key)
+print("Encrypted:", encrypted_text)
+
+decrypted_text = aes_decrypt(encrypted_text, key, iv)
+print("Decrypted:", decrypted_text.decode())
