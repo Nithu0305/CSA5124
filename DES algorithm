@@ -1,0 +1,20 @@
+from Crypto.Cipher import DES
+from Crypto.Random import get_random_bytes
+from Crypto.Util.Padding import pad, unpad
+def des_encrypt(plaintext, key):
+    cipher = DES.new(key, DES.MODE_ECB)
+    plaintext = pad(plaintext.encode(), DES.block_size)
+    ciphertext = cipher.encrypt(plaintext)
+    return ciphertext
+def des_decrypt(ciphertext, key):
+    cipher = DES.new(key, DES.MODE_ECB)
+    decrypted_text = cipher.decrypt(ciphertext)
+    decrypted_text = unpad(decrypted_text, DES.block_size)
+    return decrypted_text.decode()
+plaintext = "Hello, World!"
+key = get_random_bytes(8)  # DES key should be 8 bytes long
+print("Plaintext:", plaintext)
+encrypted_text = des_encrypt(plaintext, key)
+print("Encrypted:", encrypted_text)
+decrypted_text = des_decrypt(encrypted_text, key)
+print("Decrypted:", decrypted_text)
