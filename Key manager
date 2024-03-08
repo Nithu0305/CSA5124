@@ -1,0 +1,36 @@
+import os
+import json
+import base64
+import secrets
+class KeyManager:
+    def __init__(self, key_dir='keys'):
+        self.key_dir = key_dir
+        os.makedirs(self.key_dir, exist_ok=True)
+        self.key_store = self.load_key_store()
+
+    def load_key_store(self):
+        return {filename.split('.')[0]: json.load(open(os.path.join(self.key_dir, filename))) for filename in os.listdir(self.key_dir)}
+
+    def generate_key(self, key_id):
+        if key_id in self.key_store:
+            raise ValueError("Key ID already exists.")
+
+        key = secrets.token_bytes(32)
+        key_data = {'id': key_id, 'key': base64.b64encode(key).decode('utf-8')}
+        with open(os.path.join(self.key_dir, f"{key_id}.json"), 'w') as file:
+            json.dump(key_data, file)
+        self.key_store[key_id] = key_data
+        print(f"Key '{key_id}' generated and stored securely.")
+
+    def get_key(self, key_id):
+        return base64.b64decode(self.key_store[key_id]['key'])
+
+    def delete_key(self, key_id):
+        os.remove(os.path.join(self.key_dir, f"{key_id}.json"))
+        del self.key_store[key_id]
+        print(f"Key '{key_id}' deleted successfully.")
+key_manager = KeyManager()
+key_manager.generate_key('my_key')
+key = key_manager.get_key('my_key')
+print("Retrieved key:", key)
+key_manager.delete_key('my_key')
