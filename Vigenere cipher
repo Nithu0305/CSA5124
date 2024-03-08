@@ -1,0 +1,26 @@
+def vigenere_cipher(text, key, encrypt=True):
+    result = ""
+    key_length = len(key)
+    for i, char in enumerate(text):
+        if char.isalpha():
+            key_index = i % key_length
+            key_char = key[key_index]
+            shift = ord(key_char.lower()) - ord('a')
+            if char.isupper():
+                start = ord('A')
+            else:
+                start = ord('a')
+            if encrypt:
+                shifted_char = chr((ord(char) - start + shift) % 26 + start)
+            else:
+                shifted_char = chr((ord(char) - start - shift) % 26 + start)
+            result += shifted_char
+        else:
+            result += char
+    return result
+plaintext = "Hello, World!"
+key = "key"
+encrypted_text = vigenere_cipher(plaintext, key)
+print("Encrypted:", encrypted_text)
+decrypted_text = vigenere_cipher(encrypted_text, key, encrypt=False)
+print("Decrypted:", decrypted_text)
