@@ -1,0 +1,15 @@
+import hashlib
+
+def sha256_hash(message):
+    # Create a new SHA-256 hash object
+    sha256 = hashlib.sha256()
+    # Update the hash object with the bytes-like object (message)
+    sha256.update(message)
+    # Get the hexadecimal representation of the hash digest
+    hash_hex = sha256.hexdigest()
+    return hash_hex
+
+# Example usage
+message = b"Hello, World!"
+hash_result = sha256_hash(message)
+print("SHA-256 Hash:", hash_result)
