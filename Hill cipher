@@ -1,0 +1,41 @@
+import numpy as np
+from sympy import Matrix
+def prepare_text(text, block_size):
+    text = text.upper()
+    text = ''.join(filter(str.isalpha, text))
+    if len(text) % block_size != 0:
+        text += 'X' * (block_size - len(text) % block_size)
+    return text
+def text_to_matrix(text, block_size):
+    matrix = []
+    for i in range(0, len(text), block_size):
+        matrix.append([ord(char) - ord('A') for char in text[i:i+block_size]])
+    return matrix
+def matrix_to_text(matrix):
+    return ''.join([chr((char % 26) + ord('A')) for row in matrix for char in row])
+def inverse_matrix(matrix):
+    m = Matrix(matrix)
+    m_inv = m.inv_mod(26)
+    return np.array(m_inv.tolist(), dtype=int)
+def hill_cipher(text, key, block_size, encrypt=True):
+    text = prepare_text(text, block_size)
+    key_matrix = np.array(key).reshape(block_size, block_size)
+    if not np.linalg.det(key_matrix):
+        raise ValueError("Key matrix is not invertible.")
+    if encrypt:
+        matrix = text_to_matrix(text, block_size)
+        result_matrix = np.dot(matrix, key_matrix) % 26
+        result_text = matrix_to_text(result_matrix)
+    else:
+        key_inv_matrix = inverse_matrix(key_matrix)
+        matrix = text_to_matrix(text, block_size)
+        result_matrix = np.dot(matrix, key_inv_matrix) % 26
+        result_text = matrix_to_text(result_matrix)
+    return result_text
+plaintext = "HELLO"
+key = [6, 24, 1, 13]  # Example key matrix
+block_size = 2
+encrypted_text = hill_cipher(plaintext, key, block_size)
+print("Encrypted:", encrypted_text)
+decrypted_text = hill_cipher(encrypted_text, key, block_size, encrypt=False)
+print("Decrypted:", decrypted_text)
