@@ -1,0 +1,15 @@
+import hashlib
+
+def md5_hash(data):
+    # Create a new MD5 hash object
+    md5 = hashlib.md5()
+    # Update the hash object with the bytes-like object (data)
+    md5.update(data)
+    # Get the hexadecimal representation of the hash digest
+    hash_hex = md5.hexdigest()
+    return hash_hex
+
+# Example usage
+data = b"Hello, World!"
+hash_result = md5_hash(data)
+print("MD5 Hash:", hash_result)
